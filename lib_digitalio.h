@@ -26,37 +26,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NOPULLUPRESISTOR 2
 
 #ifdef USEDIGITALPORTB
-	#define DIGITALPORTB 0x10
+   #define DIGITALPORTB 0x10
 #endif
 #ifdef USEDIGITALPORTC
-	#define DIGITALPORTC 0x20
+   #define DIGITALPORTC 0x20
 #endif
 #ifdef USEDIGITALPORTD
-	#define DIGITALPORTD 0x30
+   #define DIGITALPORTD 0x30
 #endif
 #ifdef USEDIGITALPORTE
-	#define DIGITALPORTE 0x40
+   #define DIGITALPORTE 0x40
 #endif
 #ifdef USEDIGITALPORTF
-	#define DIGITALPORTF 0x50
+   #define DIGITALPORTF 0x50
 #endif
 #ifdef USEDIGITALPORTG
-	#define DIGITALPORTG 0x60
+   #define DIGITALPORTG 0x60
 #endif
 #ifdef USEDIGITALPORTH
-	#define DIGITALPORTH 0x70
+   #define DIGITALPORTH 0x70
 #endif
 #ifdef USEDIGITALPORTI
-	#define DIGITALPORTI 0x80
+   #define DIGITALPORTI 0x80
 #endif
 #ifdef USEDIGITALPORTJ
-	#define DIGITALPORTJ 0x90
+   #define DIGITALPORTJ 0x90
 #endif
 #ifdef USEDIGITALPORTK
-	#define DIGITALPORTK 0xA0
+   #define DIGITALPORTK 0xA0
 #endif
 #ifdef USEDIGITALPORTL
-	#define DIGITALPORTL 0xB0
+   #define DIGITALPORTL 0xB0
 #endif
 
 #define DIGITALHIGH 0

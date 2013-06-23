@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // lib_serial_senddata(2,"This is Data",4); // sends the first 4 characters of the string
 // int count=lib_serial_numcharsavailable(2);
 // if (count>0)
-//		{
-//		lib_serial_getdata(2,data,count);
-//		}
+//      {
+//      lib_serial_getdata(2,data,count);
+//      }
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -59,17 +59,17 @@ unsigned char serialrxbuffer3[SERIAL3INPUTBUFFERSIZE];
 
 
 #ifdef USESERIALPORT3
-	#define NUMSERIALPORTS 4
+   #define NUMSERIALPORTS 4
 #else
-	#ifdef USESERIALPORT2
-		#define NUMSERIALPORTS 3
-	#else
-		#ifdef USESERIALPORT1
-			#define NUMSERIALPORTS 2
-		#else
-			#define NUMSERIALPORTS 1
-		#endif
-	#endif
+   #ifdef USESERIALPORT2
+      #define NUMSERIALPORTS 3
+   #else
+      #ifdef USESERIALPORT1
+         #define NUMSERIALPORTS 2
+      #else
+         #define NUMSERIALPORTS 1
+      #endif
+   #endif
 #endif
 
 // for processors that don't number their serial ports:
@@ -97,130 +97,130 @@ volatile int serialrxbufferendindex[NUMSERIALPORTS];
 serialcallbackfunctptr serialrxcallback[NUMSERIALPORTS];
 
 void lib_serial_setrxcallback(unsigned char serialportnumber,serialcallbackfunctptr callback)
-	{
-	serialrxcallback[serialportnumber]=callback;
-	}
+   {
+   serialrxcallback[serialportnumber]=callback;
+   }
 
 #define INITSERIALPORTMACRO(portnumber,ucsra,ucsrb,uscrc,rxen,txen,uscz0,uscz1,ubrrl,ubrrh,rxcie,utx,txbuffer,rxbuffer,txsize,rxsize)\
-	if (serialportnumber==portnumber)\
-		{\
-		serialtxbuffer[portnumber]=txbuffer;\
-		serialtxbuffersize[portnumber]=txsize;\
-		serialrxbuffer[portnumber]=rxbuffer;\
-		serialrxbuffersize[portnumber]=rxsize;\
-		\
-		ucsra  = (1<<utx);\
-		ucsrb |= (1 << rxen) | (1 << txen);   /* Turn on the transmission and reception circuitry */\
-		uscrc |=  (1 << uscz0) | (1 << uscz1); /* Use 8-bit character sizes */\
-		\
-		ubrrl = baudprescale; /* Load lower 8-bits of the baud rate value into the low byte of the UBRR register */\
-		ubrrh = (baudprescale >> 8); /* Load upper 8-bits of the baud rate value into the high byte of the UBRR register */\ 
-		\
-		ucsrb |= (1 << rxcie); /* Enable the USART Recieve Complete */\
-		}
+   if (serialportnumber==portnumber)\
+      {\
+      serialtxbuffer[portnumber]=txbuffer;\
+      serialtxbuffersize[portnumber]=txsize;\
+      serialrxbuffer[portnumber]=rxbuffer;\
+      serialrxbuffersize[portnumber]=rxsize;\
+      \
+      ucsra  = (1<<utx);\
+      ucsrb |= (1 << rxen) | (1 << txen);   /* Turn on the transmission and reception circuitry */\
+      uscrc |=  (1 << uscz0) | (1 << uscz1); /* Use 8-bit character sizes */\
+      \
+      ubrrl = baudprescale; /* Load lower 8-bits of the baud rate value into the low byte of the UBRR register */\
+      ubrrh = (baudprescale >> 8); /* Load upper 8-bits of the baud rate value into the high byte of the UBRR register */\ 
+      \
+      ucsrb |= (1 << rxcie); /* Enable the USART Recieve Complete */\
+      }
 
 void lib_serial_initport(unsigned char serialportnumber,long baud)
    { // initialize the serial port and set up a read buffer and interrupts so that we don't lose any data from reading too slowly
 #ifdef USESERIALPORTUSB
-	if (serialportnumber==USBPORTNUMBER)
-		{
-		lib_usb_init();	
-		return;
-		}
+   if (serialportnumber==USBPORTNUMBER)
+      {
+      lib_usb_init();   
+      return;
+      }
 #endif
 
   unsigned long baudprescale=((F_CPU  / 4 / baud -1) / 2);
-	serialtxbufferstartindex[serialportnumber]=serialtxbufferendindex[serialportnumber]=0;
-	serialrxbufferstartindex[serialportnumber]=serialrxbufferendindex[serialportnumber]=0;
+   serialtxbufferstartindex[serialportnumber]=serialtxbufferendindex[serialportnumber]=0;
+   serialrxbufferstartindex[serialportnumber]=serialrxbufferendindex[serialportnumber]=0;
 
 #ifdef USESERIALPORT0
-	INITSERIALPORTMACRO(0,UCSR0A,UCSR0B,UCSR0C,RXEN0,TXEN0,UCSZ00,UCSZ01,UBRR0L,UBRR0H,RXCIE0,U2X0,serialtxbuffer0,serialrxbuffer0,SERIAL0OUTPUTBUFFERSIZE,SERIAL0INPUTBUFFERSIZE);
+   INITSERIALPORTMACRO(0,UCSR0A,UCSR0B,UCSR0C,RXEN0,TXEN0,UCSZ00,UCSZ01,UBRR0L,UBRR0H,RXCIE0,U2X0,serialtxbuffer0,serialrxbuffer0,SERIAL0OUTPUTBUFFERSIZE,SERIAL0INPUTBUFFERSIZE);
 #endif
 #ifdef USESERIALPORT1
-	INITSERIALPORTMACRO(1,UCSR1A,UCSR1B,UCSR1C,RXEN1,TXEN1,UCSZ10,UCSZ11,UBRR1L,UBRR1H,RXCIE1,U2X1,serialtxbuffer1,serialrxbuffer1,SERIAL1OUTPUTBUFFERSIZE,SERIAL1INPUTBUFFERSIZE);
+   INITSERIALPORTMACRO(1,UCSR1A,UCSR1B,UCSR1C,RXEN1,TXEN1,UCSZ10,UCSZ11,UBRR1L,UBRR1H,RXCIE1,U2X1,serialtxbuffer1,serialrxbuffer1,SERIAL1OUTPUTBUFFERSIZE,SERIAL1INPUTBUFFERSIZE);
 #endif
 #ifdef USESERIALPORT2
-	INITSERIALPORTMACRO(2,UCSR2A,UCSR2B,UCSR2C,RXEN2,TXEN2,UCSZ20,UCSZ21,UBRR2L,UBRR2H,RXCIE2,U2X2,serialtxbuffer2,serialrxbuffer2,SERIAL2OUTPUTBUFFERSIZE,SERIAL2INPUTBUFFERSIZE);
+   INITSERIALPORTMACRO(2,UCSR2A,UCSR2B,UCSR2C,RXEN2,TXEN2,UCSZ20,UCSZ21,UBRR2L,UBRR2H,RXCIE2,U2X2,serialtxbuffer2,serialrxbuffer2,SERIAL2OUTPUTBUFFERSIZE,SERIAL2INPUTBUFFERSIZE);
 #endif
 #ifdef USESERIALPORT3
-	INITSERIALPORTMACRO(3,UCSR3A,UCSR3B,UCSR3C,RXEN3,TXEN3,UCSZ30,UCSZ31,UBRR3L,UBRR3H,RXCIE3,U2X3,serialtxbuffer3,serialrxbuffer3,SERIAL3OUTPUTBUFFERSIZE,SERIAL3INPUTBUFFERSIZE);
+   INITSERIALPORTMACRO(3,UCSR3A,UCSR3B,UCSR3C,RXEN3,TXEN3,UCSZ30,UCSZ31,UBRR3L,UBRR3H,RXCIE3,U2X3,serialtxbuffer3,serialrxbuffer3,SERIAL3OUTPUTBUFFERSIZE,SERIAL3INPUTBUFFERSIZE);
 #endif
-	sei(); // turn on all interrupts
-	}
+   sei(); // turn on all interrupts
+   }
 
 #define SERIALSENDTHENEXTCHARMACRO(portnum,ucsrb,udrie,udr)\
-	if (serialportnumber==portnum)\
-		{\
-		if (serialtxbufferstartindex[serialportnumber]==serialtxbufferendindex[serialportnumber]) \
-			{ /* there's nothing left to send */\
-			/* turn off the transmit registre empty interrupt so it doesn't keep firing.*/\
-			/* we also use this as a flag to tell us whether we are currently sending or not.*/\
-			ucsrb &= ~(1 << udrie);\
-			}\
-		else\
-			{\
-			udr = serialtxbuffer[serialportnumber][serialtxbufferstartindex[serialportnumber]++];\
-			ucsrb |= ( 1 << udrie ); /* turn on the interrupt to tell us when we are ready to send another character*/\
-			if (serialtxbufferstartindex[serialportnumber]==serialtxbuffersize[serialportnumber]) serialtxbufferstartindex[serialportnumber]=0;\
-			}\
-		}
-			
-			
+   if (serialportnumber==portnum)\
+      {\
+      if (serialtxbufferstartindex[serialportnumber]==serialtxbufferendindex[serialportnumber]) \
+         { /* there's nothing left to send */\
+         /* turn off the transmit registre empty interrupt so it doesn't keep firing.*/\
+         /* we also use this as a flag to tell us whether we are currently sending or not.*/\
+         ucsrb &= ~(1 << udrie);\
+         }\
+      else\
+         {\
+         udr = serialtxbuffer[serialportnumber][serialtxbufferstartindex[serialportnumber]++];\
+         ucsrb |= ( 1 << udrie ); /* turn on the interrupt to tell us when we are ready to send another character*/\
+         if (serialtxbufferstartindex[serialportnumber]==serialtxbuffersize[serialportnumber]) serialtxbufferstartindex[serialportnumber]=0;\
+         }\
+      }
+         
+         
 void serialsendthenextchar(unsigned char serialportnumber)
-	{ // this should only be called internally.  It sends the next character in the send buffer to the hardware
+   { // this should only be called internally.  It sends the next character in the send buffer to the hardware
 #ifdef USESERIALPORT0
-	SERIALSENDTHENEXTCHARMACRO(0,UCSR0B,UDRIE0,UDR0);
+   SERIALSENDTHENEXTCHARMACRO(0,UCSR0B,UDRIE0,UDR0);
 #endif
 #ifdef USESERIALPORT1
-	SERIALSENDTHENEXTCHARMACRO(1,UCSR1B,UDRIE1,UDR1);
+   SERIALSENDTHENEXTCHARMACRO(1,UCSR1B,UDRIE1,UDR1);
 #endif
 #ifdef USESERIALPORT2
-	SERIALSENDTHENEXTCHARMACRO(2,UCSR2B,UDRIE2,UDR2);
+   SERIALSENDTHENEXTCHARMACRO(2,UCSR2B,UDRIE2,UDR2);
 #endif
 #ifdef USESERIALPORT3
-	SERIALSENDTHENEXTCHARMACRO(3,UCSR3B,UDRIE3,UDR3);
+   SERIALSENDTHENEXTCHARMACRO(3,UCSR3B,UDRIE3,UDR3);
 #endif
-	}
+   }
 
 #define SERIALSENDCHARMACRO(portnumber,ucsrb,udrie)\
-	if (serialportnumber==portnumber && !(ucsrb & ( 1 << udrie ))) serialsendthenextchar(serialportnumber);
+   if (serialportnumber==portnumber && !(ucsrb & ( 1 << udrie ))) serialsendthenextchar(serialportnumber);
 
 void lib_serial_sendchar(unsigned char serialportnumber,unsigned char c)
-	{ // add a character to the send buffer
+   { // add a character to the send buffer
 #ifdef USESERIALPORTUSB
-	if (serialportnumber==USBPORTNUMBER)
-		{
-		lib_usb_send(USB_CDC_TX,&c,1);
-		return;
-		}
+   if (serialportnumber==USBPORTNUMBER)
+      {
+      lib_usb_send(USB_CDC_TX,&c,1);
+      return;
+      }
 #endif
-		
-	sei();
-//	cli(); // disable interrupts while we do this so the interrupt handler doesn't change things on us
-	serialtxbuffer[serialportnumber][serialtxbufferendindex[serialportnumber]++]=c;
-	if (serialtxbufferendindex[serialportnumber]==serialtxbuffersize[serialportnumber]) serialtxbufferendindex[serialportnumber]=0;
+      
+   sei();
+//   cli(); // disable interrupts while we do this so the interrupt handler doesn't change things on us
+   serialtxbuffer[serialportnumber][serialtxbufferendindex[serialportnumber]++]=c;
+   if (serialtxbufferendindex[serialportnumber]==serialtxbuffersize[serialportnumber]) serialtxbufferendindex[serialportnumber]=0;
 
-	// if we aren't already sending something, we need to get the ball rolling by sending the first character
-	// if the transmit buffer empty interrupt flag isn't set then we aren't currently sending anything.
+   // if we aren't already sending something, we need to get the ball rolling by sending the first character
+   // if the transmit buffer empty interrupt flag isn't set then we aren't currently sending anything.
 #ifdef USESERIALPORT0
-	SERIALSENDCHARMACRO(0,UCSR0B,UDRIE0);
+   SERIALSENDCHARMACRO(0,UCSR0B,UDRIE0);
 #endif
 #ifdef USESERIALPORT1
-	SERIALSENDCHARMACRO(1,UCSR1B,UDRIE1);
+   SERIALSENDCHARMACRO(1,UCSR1B,UDRIE1);
 #endif
 #ifdef USESERIALPORT2
-	SERIALSENDCHARMACRO(2,UCSR2B,UDRIE2);
+   SERIALSENDCHARMACRO(2,UCSR2B,UDRIE2);
 #endif
 #ifdef USESERIALPORT3
-	SERIALSENDCHARMACRO(3,UCSR3B,UDRIE3);
+   SERIALSENDCHARMACRO(3,UCSR3B,UDRIE3);
 #endif
-//	sei();
-	}
-	
+//   sei();
+   }
+   
 void lib_serial_sendstring(unsigned char serialportnumber,char *string)
-	{ // adds the string to the output buffer.
-	while (*string) lib_serial_sendchar(serialportnumber,*string++);
-	}
+   { // adds the string to the output buffer.
+   while (*string) lib_serial_sendchar(serialportnumber,*string++);
+   }
 
 void lib_serial_senddata(unsigned char serialportnumber,unsigned char *data,int datalength)
    { // send datalength bytes of data to the serial port
@@ -229,88 +229,88 @@ void lib_serial_senddata(unsigned char serialportnumber,unsigned char *data,int 
 
 int lib_serial_numcharsavailable(unsigned char serialportnumber)
    { // returns number of characters available in the rx buffer
-	int returnvalue;
+   int returnvalue;
 #ifdef USESERIALPORTUSB
-	if (serialportnumber==USBPORTNUMBER)
-		{
-		return(lib_usb_charsavailable(USB_CDC_RX));
-		}
+   if (serialportnumber==USBPORTNUMBER)
+      {
+      return(lib_usb_charsavailable(USB_CDC_RX));
+      }
 #endif
 
-//	cli(); // disable interrupts because the interrupt handler changes the end index when it receives characters
-	int endindex=serialrxbufferendindex[serialportnumber];
-//	sei();
-	
-	returnvalue=endindex-serialrxbufferstartindex[serialportnumber];
-	if (serialrxbufferstartindex[serialportnumber]>endindex)
-		returnvalue+=serialrxbuffersize[serialportnumber];
-	return(returnvalue);
-	}
+//   cli(); // disable interrupts because the interrupt handler changes the end index when it receives characters
+   int endindex=serialrxbufferendindex[serialportnumber];
+//   sei();
+   
+   returnvalue=endindex-serialrxbufferstartindex[serialportnumber];
+   if (serialrxbufferstartindex[serialportnumber]>endindex)
+      returnvalue+=serialrxbuffersize[serialportnumber];
+   return(returnvalue);
+   }
 
 unsigned char lib_serial_getchar(unsigned char serialportnumber)
    { // get the next character from the serial port
-	// I don't think we need to disable interrupts here since the interrupt handler shouldn't be
-	// changing any of the things we are looking at here.
+   // I don't think we need to disable interrupts here since the interrupt handler shouldn't be
+   // changing any of the things we are looking at here.
 #ifdef USESERIALPORTUSB
-	if (serialportnumber==USBPORTNUMBER)
-		{
-		return(lib_usb_recv(USB_CDC_RX));
-		}
+   if (serialportnumber==USBPORTNUMBER)
+      {
+      return(lib_usb_recv(USB_CDC_RX));
+      }
 #endif
 
-	unsigned char returnvalue=serialrxbuffer[serialportnumber][serialrxbufferstartindex[serialportnumber]++];
-	if (serialrxbufferstartindex[serialportnumber]==serialrxbuffersize[serialportnumber]) serialrxbufferstartindex[serialportnumber]=0;
-	return(returnvalue);
-	}
+   unsigned char returnvalue=serialrxbuffer[serialportnumber][serialrxbufferstartindex[serialportnumber]++];
+   if (serialrxbufferstartindex[serialportnumber]==serialrxbuffersize[serialportnumber]) serialrxbufferstartindex[serialportnumber]=0;
+   return(returnvalue);
+   }
 
 void lib_serial_getdata(unsigned char serialportnumber,unsigned char *data,int numchars)
-	{
-	for (int x=0;x<numchars;++x)
-		*data++=lib_serial_getchar(serialportnumber);
-	}
+   {
+   for (int x=0;x<numchars;++x)
+      *data++=lib_serial_getchar(serialportnumber);
+   }
 
 void serialaddcharactertoreceivebuffer(unsigned char serialportnumber,unsigned char c)
-	{ // used internally by the interrupt handler
-	sei();
-	
-	// if there's a callback associated with this port, use it instead of our buffer
-	if (serialrxcallback[serialportnumber])
+   { // used internally by the interrupt handler
+   sei();
+   
+   // if there's a callback associated with this port, use it instead of our buffer
+   if (serialrxcallback[serialportnumber])
       {
       (*serialrxcallback[serialportnumber])(c);
       }
-	else
-		{
-		serialrxbuffer[serialportnumber][serialrxbufferendindex[serialportnumber]++]=c;
-		if (serialrxbufferendindex[serialportnumber]==serialrxbuffersize[serialportnumber]) serialrxbufferendindex[serialportnumber]=0;
-		}
-	}
-	
+   else
+      {
+      serialrxbuffer[serialportnumber][serialrxbufferendindex[serialportnumber]++]=c;
+      if (serialrxbufferendindex[serialportnumber]==serialrxbuffersize[serialportnumber]) serialrxbufferendindex[serialportnumber]=0;
+      }
+   }
+   
 #define SERIALISRMACRO(number,txvector,rxvector,udr)\
 ISR(txvector) \
-	{ /* we just finished sending a character from our transmit buffer.  Send the next one.*/\
-	serialsendthenextchar(number);\
-	}\
+   { /* we just finished sending a character from our transmit buffer.  Send the next one.*/\
+   serialsendthenextchar(number);\
+   }\
 \
 ISR(rxvector)\
-	{ /* we just received an incoming character*/\
-	unsigned char c=udr;\
-	serialaddcharactertoreceivebuffer(number,c);\
-	}
+   { /* we just received an incoming character*/\
+   unsigned char c=udr;\
+   serialaddcharactertoreceivebuffer(number,c);\
+   }
 
 // This interrupt gets called when the transmit buffer is ready for another byte.
 #ifdef USESERIALPORT0
 
 // unfortunately, different processors use different names for their interrupt vectors
 #ifdef USART_RX_vect
-	#define USART0_RX_vect USART_RX_vect
+   #define USART0_RX_vect USART_RX_vect
 #else
-	#ifdef USART_RXC_vect
-		#define USART0_RX_vect USART_RXC_vect
-	#endif
+   #ifdef USART_RXC_vect
+      #define USART0_RX_vect USART_RXC_vect
+   #endif
 #endif
 
 #ifdef USART_UDRE_vect
-	#define USART0_UDRE_vect USART_UDRE_vect
+   #define USART0_UDRE_vect USART_UDRE_vect
 #endif
 
 
