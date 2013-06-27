@@ -25,6 +25,7 @@ void lib_serial_senddata(unsigned char serialportnumber,unsigned char *data,int 
 int lib_serial_numcharsavailable(unsigned char serialportnumber);
 unsigned char lib_serial_getchar(unsigned char serialportnumber);
 void lib_serial_getdata(unsigned char serialportnumber,unsigned char *data,int datalength);
+int lib_serial_availableoutputbuffersize(unsigned char serialportnumber);
 
 typedef void (* serialcallbackfunctptr)(unsigned char c);
 void lib_serial_setrxcallback(unsigned char serialportnumber,serialcallbackfunctptr callback);

@@ -96,6 +96,14 @@ int serialrxbufferstartindex[NUMSERIALPORTS];
 volatile int serialrxbufferendindex[NUMSERIALPORTS];
 serialcallbackfunctptr serialrxcallback[NUMSERIALPORTS];
 
+int lib_serial_availableoutputbuffersize(unsigned char serialportnumber)
+   { // returns how many more bytes can fit in the outputbuffer
+   if (serialtxbufferstartindex[serialportnumber]>serialtxbufferendindex[serialportnumber])
+      return(serialtxbufferstartindex[serialportnumber]-serialtxbufferendindex[serialportnumber]-1);
+   else
+      return(serialtxbuffersize[serialportnumber]-(serialtxbufferendindex[serialportnumber]-serialtxbufferstartindex[serialportnumber])-1);
+   }
+
 void lib_serial_setrxcallback(unsigned char serialportnumber,serialcallbackfunctptr callback)
    {
    serialrxcallback[serialportnumber]=callback;
