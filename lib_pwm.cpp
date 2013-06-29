@@ -180,7 +180,6 @@ void lib_pwm_init4(unsigned char mode,unsigned char output,unsigned char prescal
    if (output & (PWM411BITNORMALOUTPUTD | PWM411BITNORMALANDINVERTEDOUTPUTD))
       TCCR4C |= (1<<PWM4D); // enable port B
 
-//TCCR4B &= ~(1<<CS41);
    TCCR4B |=prescaler;
    if (top & 0x400)
       TCCR4E |= (1<<ENHC4); // enhanced mode

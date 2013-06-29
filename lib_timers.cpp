@@ -32,15 +32,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // inittimers();
 // unsigned long mytimer=lib_timers_starttimer();
-//   while (lib_timers_gettimermicroseconds(mytimer)<500000L) {}
+// while (lib_timers_gettimermicroseconds(mytimer)<500000L) {}
 
 // inittimers();
-//   lib_timers_delaymilli(500) {}
+//    lib_timers_delaymilliseconds(500) {}
 
 
 volatile unsigned long timeroverflowcount=0; // the number of overflows our counter has encountered
 
 #ifdef USETIMER1FORGENERALTIMER
+
 void lib_timers_init()
    { // needs to be called once in the program before timers can be used
    TCCR1B |= (1 << CS11); // Set up timer at Fcpu/8
@@ -63,7 +64,7 @@ ISR(TIMER1_OVF_vect)
    }
    
 unsigned long lib_timers_getcurrentmicroseconds()
-   { // returns microseconds since startup
+   { // returns microseconds since startup.  This mainly used internally because it wraps around.
    cli();
    unsigned int countervalue=TCNT1;
    long overflowcount=timeroverflowcount;
@@ -84,7 +85,6 @@ unsigned long lib_timers_getcurrentmicroseconds()
 void lib_timers_init()
    { // needs to be called once in the program before timers can be used
    TCCR0B |= (1 << CS01) | (1 << CS00); // Set up timer at Fcpu/64
-//   TCCR0B |= (1 << CS11); // Set up timer at Fcpu/8
    // at 16mhz, this gives 250,000 counts/second or 0.000004 seconds per count
    // our 8 bit counter will overflow in 0.001024 seconds
 
@@ -104,7 +104,7 @@ ISR(TIMER0_OVF_vect)
    }
    
 unsigned long lib_timers_getcurrentmicroseconds()
-   { // returns microseconds since startup
+   { // returns microseconds since startup.  This mainly used internally because it wraps around.
    cli();
    unsigned char countervalue=TCNT0;
    long overflowcount=timeroverflowcount;
@@ -158,7 +158,7 @@ unsigned long lib_timers_starttimer()
    return(lib_timers_getcurrentmicroseconds());
    }
    
-void lib_timers_delaymilli(unsigned long delaymilliseconds)
+void    lib_timers_delaymilliseconds(unsigned long delaymilliseconds)
    {
    unsigned long timercounts=lib_timers_starttimer();
    while (lib_timers_gettimermicroseconds(timercounts)<delaymilliseconds*1000L) {}

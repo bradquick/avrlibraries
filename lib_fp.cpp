@@ -363,7 +363,7 @@ fixedpointnum lib_fp_stringtofixedpointnum(char *string)
 
    // use six digits after the decimal
    ++string;
-   char fractionallength=0;
+   int fractionallength=0;
    while (string[fractionallength]>='0' && string[fractionallength]<='9') ++fractionallength;
    
    if (fractionallength>6) string[6]='\0';

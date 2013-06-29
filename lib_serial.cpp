@@ -245,9 +245,7 @@ int lib_serial_numcharsavailable(unsigned char serialportnumber)
       }
 #endif
 
-//   cli(); // disable interrupts because the interrupt handler changes the end index when it receives characters
    int endindex=serialrxbufferendindex[serialportnumber];
-//   sei();
    
    returnvalue=endindex-serialrxbufferstartindex[serialportnumber];
    if (serialrxbufferstartindex[serialportnumber]>endindex)

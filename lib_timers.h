@@ -17,10 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "projectsettings.h"
-
 void lib_timers_init();
 unsigned long lib_timers_starttimer();
 unsigned long lib_timers_gettimermicroseconds(unsigned long starttime);
 unsigned long lib_timers_gettimermicrosecondsandreset(unsigned long *starttime);
-void lib_timers_delaymilli(unsigned long delaymilliseconds);
+void    lib_timers_delaymilliseconds(unsigned long delaymilliseconds);
