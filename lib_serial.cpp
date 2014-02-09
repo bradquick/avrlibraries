@@ -96,6 +96,11 @@ int serialrxbufferstartindex[NUMSERIALPORTS];
 volatile int serialrxbufferendindex[NUMSERIALPORTS];
 serialcallbackfunctptr serialrxcallback[NUMSERIALPORTS];
 
+char lib_serial_outputbufferisempty(unsigned char serialportnumber)
+   {
+   return(serialtxbufferstartindex[serialportnumber]==serialtxbufferendindex[serialportnumber]);
+   }
+
 int lib_serial_availableoutputbuffersize(unsigned char serialportnumber)
    { // returns how many more bytes can fit in the outputbuffer
 #ifdef USESERIALPORTUSB
