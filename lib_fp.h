@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define FIXEDPOINTONE (1L<<FIXEDPOINTSHIFT)
 
-#define FIXEDPOINTCONSTANT(number) ((fixedpointnum)(number*FIXEDPOINTONE))
+#define FIXEDPOINTCONSTANT(number) ((fixedpointnum)(number*FIXEDPOINTONE+.5))
 
 #define FIXEDPOINT45 (45L<<FIXEDPOINTSHIFT)
 #define FIXEDPOINT80 (80L<<FIXEDPOINTSHIFT)
